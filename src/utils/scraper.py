@@ -6,11 +6,6 @@ from collections import defaultdict
 from bs4 import BeautifulSoup
 import json
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--site", type=str, required=True)
-parser.add_argument("--depth", type=int, default=3)
-
-
 def cleanUrl(url: str):
     return url.replace("https://", "").replace("/", "-").replace(".", "_")
 
@@ -31,11 +26,12 @@ def get_response_and_save(url: str):
         return None
 
 
+
 def scrape_links(
     scheme: str,
     origin: str,
     path: str,
-    depth=3,
+    depth,
     sitemap: dict = defaultdict(lambda: ""),
 ):
     siteUrl = scheme + "://" + origin + path
@@ -47,8 +43,8 @@ def scrape_links(
         return
 
     sitemap[cleanedUrl] = siteUrl
-    response, file_path = get_response_and_save(siteUrl)
-    if response is not None:  
+    response = get_response_and_save(siteUrl)
+    if response is not None:  # Check if response is not None
         soup = BeautifulSoup(response.content, "html.parser")
         links = soup.find_all("a")
 
@@ -65,15 +61,12 @@ def scrape_links(
                 depth=depth - 1,
                 sitemap=sitemap,
             )
-    
-    # Create a list of dictionaries containing cleaned URL and file path
-    sitemap_list = [{"cleaned_url": k, "file_path": v} for k, v in sitemap.items()]
-    return sitemap, sitemap_list
+    return sitemap
 
-def scrape_site(site, depth):
-    url = urlparse(site)
-    sitemap, sitemap_list = scrape_links(url.scheme, url.netloc, url.path, depth=depth)
-    with open("./scrape/sitemap.json", "w") as f:
-        f.write(json.dumps(sitemap))
-    return sitemap, sitemap_list
 
+
+# if __name__ == "__main__":
+#     args = parser.parse_args()
+#     url = urlparse(args.site)
+#     sitemap = scrape_links(url.scheme, url.netloc, url.path, depth=args.depth)
+#     
