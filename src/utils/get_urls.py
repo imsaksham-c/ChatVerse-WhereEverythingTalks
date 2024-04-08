@@ -1,5 +1,5 @@
-import requests
 from urllib.parse import urlparse, urljoin
+import requests
 from bs4 import BeautifulSoup
 
 def get_links(url):
@@ -15,24 +15,43 @@ def get_links(url):
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
+        }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
             links = [link.get('href') for link in soup.find_all('a', href=True)]
             return links
         else:
+            print(f"Failed to retrieve page {url}: {response.status_code}")
             return []
     except Exception as e:
+        print(f"An error occurred while retrieving page {url}: {str(e)}")
         return []
 
-def filter_links(links, main_domain):
+def normalize_url(url):
     """
-    Filter out links that do not belong to the main domain and exclude media files.
+    Normalize a URL by removing 'www.' from the netloc and trailing slashes from the path.
+
+    Args:
+    url (str): The URL to normalize.
+
+    Returns:
+    str: The normalized URL.
+    """
+    parsed_url = urlparse(url)
+    scheme = parsed_url.scheme.lower()
+    netloc = parsed_url.netloc.lower().replace('www.', '')  # Remove 'www.' if present
+    path = parsed_url.path.rstrip('/')  # Remove trailing slashes
+    normalized_url = f"{scheme}://{netloc}{path}"
+    return normalized_url
+
+def filter_links(links, base_domain):
+    """
+    Filter out links based on the base domain and media file extensions.
 
     Args:
     links (list): A list of links to be filtered.
-    main_domain (str): The main domain of the website.
+    base_domain (str): The base domain of the website.
 
     Returns:
     list: A list of filtered links.
@@ -42,51 +61,45 @@ def filter_links(links, main_domain):
         if link is None:
             continue
         parsed_url = urlparse(link)
-        if parsed_url.scheme not in ('http', 'https'):
-            continue
-        if parsed_url.netloc != main_domain:
-            continue
-        if parsed_url.path.lower().endswith(('.jpg', '.png', '.gif', '.mp4', '.avi', '.mp3')):
-            continue
-        valid_links.append(link)
+        normalized_url = normalize_url(link)
+        if base_domain in parsed_url.netloc.lower() or base_domain in parsed_url.path.lower():
+            if not any(normalized_url.lower().endswith(ext) for ext in ('.jpg', '.png', '.gif', '.mp4', '.avi', '.mp3')):
+                valid_links.append(normalized_url)
     return valid_links
 
-def scrape_website(url, depth, main_domain, visited=None):
+def scrape_website(url, base_domain, depth, visited=None):
     """
-    Scrape the website for links up to a specified depth.
+    Scrape a website recursively up to a specified depth and collect all the links.
 
     Args:
     url (str): The URL of the website to scrape.
+    base_domain (str): The base domain of the website.
     depth (int): The depth to scrape links.
-    main_domain (str): The main domain of the website.
     visited (set, optional): A set to store visited URLs to avoid duplicates.
 
     Returns:
-    list: A list of links found on the website up to the specified depth.
+    list: A list of unique links found on the website up to the specified depth.
     """
     if visited is None:
         visited = set()
 
-    if depth == 0:
+    if depth == 0 or url in visited:
         return [url]
-
-    if url in visited:
-        return []
 
     visited.add(url)
 
     links = get_links(url)
-    filtered_links = filter_links(links, main_domain)
+    filtered_links = filter_links(links, base_domain)
 
     collected_links = [url]
-    if depth > 1:
-        for link in filtered_links:
-            absolute_url = urljoin(url, link)
-            collected_links.extend(scrape_website(absolute_url, depth - 1, main_domain, visited))
+    for link in filtered_links:
+        absolute_url = urljoin(url, link)
+        collected_links.extend(scrape_website(absolute_url, base_domain, depth - 1, visited))
 
-    return collected_links
+    return list(set(collected_links))
 
-def scrape_urls(website, depth=2):
+
+def scrape_urls(website, depth=0):
     """
     Scrape URLs from a website up to a specified depth.
 
@@ -97,6 +110,6 @@ def scrape_urls(website, depth=2):
     Returns:
     list: A list of URLs found on the website up to the specified depth.
     """
-    main_domain = urlparse(website).netloc
-    links = scrape_website(website, depth, main_domain)
+    base_domain = urlparse(website).netloc.split('.')[0]
+    links = scrape_website(website, base_domain, depth)
     return links
