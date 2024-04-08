@@ -6,6 +6,8 @@ Welcome to the WebChat - Chat with Website GitHub repository! This project serve
 
 You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo](https://webchat-demo.streamlit.app/).
 
+![alt text](https://github.com/imsaksham-c/WebChat-WebsiteChatbot/blob/main/docs/demo.mp4)
+
 ## Features
 
 - **Website Interaction:** The application scrapes website content based on user input, allowing them to specify the scraping depth.
@@ -49,7 +51,7 @@ To run the Streamlit app:
 streamlit src/run app.py
 ```
 
-![alt text](https://github.com/alejandro-ao/chat-with-websites/blob/master/docs/HTML-rag-diagram.jpg)
+![alt text](https://github.com/imsaksham-c/WebChat-WebsiteChatbot/blob/main/docs/HTML-rag-diagram.jpg)
 
 ## Contributing
 
