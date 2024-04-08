@@ -25,8 +25,8 @@ You can access the deployed demo of the chatbot on Streamlit by visiting [WebCha
 Ensure you have Python installed on your system. Then clone this repository:
 
 ```bash
-git clone [repository-link]
-cd [repository-directory]
+git clone https://github.com/imsaksham-c/WebChat-WebsiteChatbot.git
+cd WebChat-WebsiteChatbot
 ```
 
 Install the required packages:
@@ -46,7 +46,7 @@ OPENAI_API_KEY=[your-openai-api-key]
 To run the Streamlit app:
 
 ```bash
-streamlit run app.py
+streamlit src/run app.py
 ```
 
 ![alt text](https://github.com/alejandro-ao/chat-with-websites/blob/master/docs/HTML-rag-diagram.jpg)
