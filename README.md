@@ -4,7 +4,9 @@ Welcome to the WebChat - Chat with Website GitHub repository! This project serve
 
 ## Demo
 
-You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo](https://webchat-demo.streamlit.app/).
+You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo on Streamlit](https://webchat-demo.streamlit.app/).
+
+You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo on Render](https://webchat-websitechatbot.onrender.com/).
 
 
 
@@ -80,6 +82,14 @@ This project is licensed under the MIT License. For more details, refer to the [
 We hope this repository serves as a valuable resource for your journey in exploring AI and chatbot development. For additional tutorials and information, visit [Your YouTube Channel].
 
 If you find this repository useful, don't forget to star it!
+
+## Upcoming Features
+
+- [ ] Document + Website 
+- [ ] Whatsapp Integration
+- [ ] Custom API & Deployment
+- [ ] Add other vector DBs (Pinecone, LanceDB, etc)
+- [ ] Add other LLM support (Gemini, Mistral, etc)
 
 ---
 Connect with me on [LinkedIn](https://www.linkedin.com/in/saksham-chaurasia/) or reach out via email at imsaksham.c@gmail.com.
