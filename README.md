@@ -49,6 +49,8 @@ To run the Streamlit app:
 streamlit run app.py
 ```
 
+![alt text](https://github.com/alejandro-ao/chat-with-websites/blob/master/docs/HTML-rag-diagram.jpg)
+
 ## Contributing
 
 Contributions from the community are highly encouraged! Whether it's fixing bugs, improving documentation, adding new features, or enhancing existing ones, your contributions are valuable in making this project better for everyone.
