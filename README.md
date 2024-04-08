@@ -6,7 +6,11 @@ Welcome to the WebChat - Chat with Website GitHub repository! This project serve
 
 You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo](https://webchat-demo.streamlit.app/).
 
-[![Watch the video](https://github.com/imsaksham-c/WebChat-WebsiteChatbot/blob/main/docs/thumbnail.png)](https://github.com/imsaksham-c/WebChat-WebsiteChatbot/blob/main/docs/demo.mp4)
+
+
+https://github.com/imsaksham-c/WebChat-WebsiteChatbot/assets/43902924/f5a38d91-f9cb-40a4-8bae-5aab62c0ad06
+
+
 
 ## Features
 
