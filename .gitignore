@@ -160,3 +160,5 @@ __pycache__
 src/.DS_Store
 .devcontainer
 .gitattributes
+uploads/
+src/utils/.DS_Store
