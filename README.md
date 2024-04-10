@@ -8,6 +8,8 @@ You can access the deployed demo of the chatbot on Streamlit by visiting [WebCha
 
 You can access the deployed demo of the chatbot on Streamlit by visiting [WebChat Demo on Render](https://webchat-websitechatbot.onrender.com/).
 
+Note: Website URL syntax should be "https://<website>", else the connection will not be secure which will further cause error while scraping. Example - https://en.wikipedia.org/wiki/Edward_Snowden
+
 
 
 https://github.com/imsaksham-c/WebChat-WebsiteChatbot/assets/43902924/f5a38d91-f9cb-40a4-8bae-5aab62c0ad06
