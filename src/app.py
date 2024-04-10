@@ -26,8 +26,8 @@ def get_vectorstore(url, max_depth, files):
     if os.path.exists('src/chroma'):
         shutil.rmtree('src/chroma')
 
-    if not os.path.exists('./uploads'):
-        os.makedirs('./uploads')
+    if not os.path.exists('src/uploads'):
+        os.makedirs('src/uploads')
 
     if os.path.exists('src/scrape'):
         shutil.rmtree('src/scrape')
