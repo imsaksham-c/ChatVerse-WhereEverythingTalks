@@ -107,8 +107,8 @@ def get_response(user_input):
     return response['answer']
 
 # app config
-st.set_page_config(page_title="WebChat 🤖: Chat with Websites", page_icon="🤖")
-st.title("WebChat 🤖: Chat with Websites")
+st.set_page_config(page_title="Web+Docu-Chat 🤖: Chat with Websites & Documents", page_icon="🤖")
+st.title("Web+Docu-Chat 🤖: Chat with Websites & Documents")
 
 if "freeze" not in st.session_state:
     st.session_state.freeze = False
@@ -121,7 +121,7 @@ if "files" not in st.session_state:
 
 # sidebar
 with st.sidebar:
-    st.header("WebChat 🤖")
+    st.header("Web+Docu_Chat 🤖")
     st.session_state.web_url = st.text_input("Website URL", disabled=st.session_state.freeze)
     
     st.session_state.max_depth = st.slider("Select maximum scraping depth:", 1, 5, 1, disabled=st.session_state.freeze)
