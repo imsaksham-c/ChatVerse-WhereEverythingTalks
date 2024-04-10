@@ -46,9 +46,15 @@ def load_and_split_data_from_files(uploaded_files: list) -> tuple[list, int]:
         tuple: A tuple containing a list of document chunks and the total number of documents loaded.
     """
 
+    if not os.path.exists('src/uploads/'):
+        os.makedirs('src/uploads/')
+
     all_chunks = []
     for file_path in uploaded_files:
-        file_path_with_dir = os.path.join("uploads", file_path.name)
+        with open(os.path.join("src/uploads", file_path.name), "wb") as f:
+                f.write(file_path.getvalue())
+
+        file_path_with_dir = os.path.join("src/uploads", file_path.name)
 
         # Choose loader based on file extension
         if file_path_with_dir.endswith(".pdf"):
@@ -69,7 +75,7 @@ def load_and_split_data_from_files(uploaded_files: list) -> tuple[list, int]:
         document_chunks = text_splitter.split_documents(document)
         all_chunks.extend(document_chunks)
 
-    return all_chunks, len(uploaded_files)
+    return all_chunks, len(document)
 
 
 def load_data(url: str, max_depth: int, uploaded_files: list) -> tuple[list, int]:

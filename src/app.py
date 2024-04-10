@@ -12,6 +12,15 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 load_dotenv()
 
+if os.path.exists('src/chroma'):
+    shutil.rmtree('src/chroma')
+
+if os.path.exists('src/uploads'):
+    shutil.rmtree('src/uploads')
+
+if os.path.exists('src/scrape'):
+    shutil.rmtree('src/scrape')
+
 def get_vectorstore(url, max_depth, files):
     """
     Scrape website URLs and create a vector store.
@@ -23,14 +32,6 @@ def get_vectorstore(url, max_depth, files):
     Returns:
         tuple: A tuple containing the created vector store and the number of URLs scraped.
     """
-    if os.path.exists('src/chroma'):
-        shutil.rmtree('src/chroma')
-
-    if not os.path.exists('src/uploads'):
-        os.makedirs('src/uploads')
-
-    if os.path.exists('src/scrape'):
-        shutil.rmtree('src/scrape')
 
     document_chunks, length = load_data(url, max_depth, files)
     
