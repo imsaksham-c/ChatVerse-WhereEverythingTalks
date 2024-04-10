@@ -37,7 +37,7 @@ def get_vectorstore(url, max_depth, files):
     # create a vectorstore from the chunks
     vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
 
-    return vector_store, len(length)
+    return vector_store, length
 
 def get_context_retriever_chain(vector_store):
     """

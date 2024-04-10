@@ -40,7 +40,7 @@ def get_data_from_file(files):
         document = loader.load()
         document_chunks = text_splitter.split_documents(document)
         all_document_chunks.extend(document_chunks)
-        return all_document_chunks, len(files)
+        return all_document_chunks, len(document)
     
 
 def load_files(url, max_depth, files):
@@ -48,13 +48,14 @@ def load_files(url, max_depth, files):
     final_list = []
     total_scrapped = 0
     
-    if url is not "":
+    if url != "":
         web_files, length = get_data_from_url(url, max_depth)
         total_scrapped += length
         final_list.extend(web_files)
     else:
         web_files = []
-    if files is not "":
+
+    if len(files)>0 and files is not None:
         uploaded_files, length = get_data_from_file(files)
         total_scrapped += length
         final_list.extend(uploaded_files)
