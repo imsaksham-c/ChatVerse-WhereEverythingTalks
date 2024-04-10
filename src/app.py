@@ -1,10 +1,8 @@
 import os
 import shutil
 import streamlit as st
-from utils.get_urls import scrape_urls
+from utils.helper import load_files
 from langchain_core.messages import AIMessage, HumanMessage
-from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from dotenv import load_dotenv
@@ -12,10 +10,9 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-
 load_dotenv()
 
-def get_vectorstore_from_url(url, max_depth):
+def get_vectorstore(url, max_depth, files):
     """
     Scrape website URLs and create a vector store.
 
@@ -29,22 +26,18 @@ def get_vectorstore_from_url(url, max_depth):
     if os.path.exists('src/chroma'):
         shutil.rmtree('src/chroma')
 
+    if not os.path.exists('./uploads'):
+        os.makedirs('./uploads')
+
     if os.path.exists('src/scrape'):
         shutil.rmtree('src/scrape')
 
-    urls = scrape_urls(url, max_depth)
-    # get the text in document form
-    loader = WebBaseLoader(urls)
-    document = loader.load()
-    
-    # split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter()
-    document_chunks = text_splitter.split_documents(document)
+    document_chunks, length = load_files(url, max_depth, files)
     
     # create a vectorstore from the chunks
     vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
 
-    return vector_store, len(urls)
+    return vector_store, len(length)
 
 def get_context_retriever_chain(vector_store):
     """
@@ -121,18 +114,28 @@ if "freeze" not in st.session_state:
     st.session_state.freeze = False
 if "max_depth" not in st.session_state:
     st.session_state.max_depth = 1
+if "web_url" not in st.session_state:
+    st.session_state.web_url = ""
+if "files" not in st.session_state:
+    st.session_state.files = ""
 
 # sidebar
 with st.sidebar:
     st.header("WebChat 🤖")
-    website_url = st.text_input("Website URL")
+    st.session_state.web_url = st.text_input("Website URL")
     
     st.session_state.max_depth = st.slider("Select maximum scraping depth:", 1, 5, 1, disabled=st.session_state.freeze)
+
+    st.session_state.files = st.file_uploader("Upload your files...",
+                                     type=['pdf', '.csv', '.xlsx', '.txt', '.docx'], accept_multiple_files=True)
+    
     if st.button("Proceed", disabled=st.session_state.freeze):
         st.session_state.freeze = True
     
-if website_url is None or website_url == "":
-    st.info("Please enter a website URL")
+if ((st.session_state.web_url is None or st.session_state.web_url == "") 
+    and 
+    (st.session_state.files is None or st.session_state.files == "")):
+    st.info("Please enter a website URL and(or) Documents")
 
 else:
     if st.session_state.freeze:
@@ -143,9 +146,10 @@ else:
             ]
         if "vector_store" not in st.session_state:
             with st.sidebar:
-                with st.spinner("Scrapping Website..."):
-                    st.session_state.vector_store, st.session_state.len_urls = get_vectorstore_from_url(website_url,
-                                                                                                        st.session_state.max_depth)
+                with st.spinner("Scrapping Website & Documents..."):
+                    st.session_state.vector_store, st.session_state.len_urls = get_vectorstore(st.session_state.web_url,
+                                                                                               st.session_state.max_depth,
+                                                                                               st.session_state.files)
                     st.write(f"Total Pages Scrapped: {st.session_state.len_urls}")
                     st.success("Scraping completed, 🤖 Ready!")
 
@@ -170,9 +174,8 @@ else:
                 with st.chat_message("Human"):
                     st.write(message.content)
     
-with st.sidebar:
-    st.sidebar.markdown('---')
-    st.sidebar.markdown('Connect with me:')
-    st.sidebar.markdown('[LinkedIn](https://www.linkedin.com/in/saksham-chaurasia/)')
-    st.sidebar.markdown('[GitHub](https://github.com/imsaksham-c)')
-    st.sidebar.markdown('[Email](mailto:imsaksham.c@gmail.com)')
+st.sidebar.markdown('---')
+st.sidebar.markdown('Connect with me:')
+st.sidebar.markdown('[LinkedIn](https://www.linkedin.com/in/saksham-chaurasia/)')
+st.sidebar.markdown('[GitHub](https://github.com/imsaksham-c)')
+st.sidebar.markdown('[Email](mailto:imsaksham.c@gmail.com)')
