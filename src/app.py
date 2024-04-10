@@ -1,7 +1,7 @@
 import os
 import shutil
 import streamlit as st
-from utils.helper import load_files
+from utils.helper import load_data
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
@@ -32,7 +32,7 @@ def get_vectorstore(url, max_depth, files):
     if os.path.exists('src/scrape'):
         shutil.rmtree('src/scrape')
 
-    document_chunks, length = load_files(url, max_depth, files)
+    document_chunks, length = load_data(url, max_depth, files)
     
     # create a vectorstore from the chunks
     vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
@@ -122,12 +122,14 @@ if "files" not in st.session_state:
 # sidebar
 with st.sidebar:
     st.header("WebChat 🤖")
-    st.session_state.web_url = st.text_input("Website URL")
+    st.session_state.web_url = st.text_input("Website URL", disabled=st.session_state.freeze)
     
     st.session_state.max_depth = st.slider("Select maximum scraping depth:", 1, 5, 1, disabled=st.session_state.freeze)
 
     st.session_state.files = st.file_uploader("Upload your files...",
-                                     type=['pdf', '.csv', '.xlsx', '.txt', '.docx'], accept_multiple_files=True)
+                                     type=['pdf', '.csv', '.xlsx', '.txt', '.docx'],
+                                     accept_multiple_files=True,
+                                     disabled=st.session_state.freeze)
     
     if st.button("Proceed", disabled=st.session_state.freeze):
         st.session_state.freeze = True
