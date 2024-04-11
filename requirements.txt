@@ -6,4 +6,5 @@ python-dotenv==1.0.1
 streamlit==1.30.0
 chromadb==0.3.29
 bs4==0.0.2
+pypdf
 watchdog
