@@ -8,3 +8,5 @@ chromadb==0.3.29
 bs4==0.0.2
 pypdf
 watchdog
+openai-whisper
+pytube

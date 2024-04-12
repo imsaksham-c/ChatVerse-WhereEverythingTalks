@@ -1,7 +1,9 @@
 import os
+import pytube as pt
+from openai import OpenAI
+from dotenv import load_dotenv
 from utils.get_urls import scrape_urls
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
 from langchain_community.document_loaders import (
     WebBaseLoader,
     PyPDFLoader,
@@ -11,7 +13,27 @@ from langchain_community.document_loaders import (
     UnstructuredExcelLoader,
 )
 
+load_dotenv()
+client = OpenAI()
+
 text_splitter = RecursiveCharacterTextSplitter()
+
+def fetch_and_split_data_from_youtube(youtube_url):
+    yt = pt.YouTube(youtube_url)
+    stream = yt.streams.filter(only_audio=True)[0]
+    stream.download(filename="./audio_english.mp3")
+
+    audio_file = open("./audio_english.mp3", "rb")
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file,
+        language='en',
+        response_format="text"
+    )
+
+    document_chunks = text_splitter.create_documents(transcription)
+
+    return document_chunks, 1
 
 
 def fetch_and_split_data_from_url(url: str, max_depth: int) -> tuple[list, int]:
@@ -78,7 +100,7 @@ def load_and_split_data_from_files(uploaded_files: list) -> tuple[list, int]:
     return all_chunks, len(document)
 
 
-def load_data(url: str, max_depth: int, uploaded_files: list) -> tuple[list, int]:
+def load_data(url: str, max_depth: int, uploaded_files: list, youtube: str):
     """
     Loads data from a URL (with scraping) and uploaded files, handling different file formats
     and splitting documents into chunks.
@@ -104,5 +126,10 @@ def load_data(url: str, max_depth: int, uploaded_files: list) -> tuple[list, int
         file_chunks, num_files = load_and_split_data_from_files(uploaded_files)
         total_loaded += num_files
         final_chunks.extend(file_chunks)
+
+    if youtube:
+        chunks, num_scraped = fetch_and_split_data_from_youtube(youtube)
+        total_loaded += num_scraped
+        final_chunks.extend(chunks)
 
     return final_chunks, total_loaded
