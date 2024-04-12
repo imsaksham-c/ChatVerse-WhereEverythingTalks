@@ -21,7 +21,10 @@ if os.path.exists('src/uploads'):
 if os.path.exists('src/scrape'):
     shutil.rmtree('src/scrape')
 
-def get_vectorstore(url, max_depth, files):
+if os.path.isfile('./audio_english.mp3'):
+    os.remove('./audio_english.mp3')
+
+def get_vectorstore(url, max_depth, files, youtube):
     """
     Scrape website URLs and create a vector store.
 
@@ -33,7 +36,7 @@ def get_vectorstore(url, max_depth, files):
         tuple: A tuple containing the created vector store and the number of URLs scraped.
     """
 
-    document_chunks, length = load_data(url, max_depth, files)
+    document_chunks, length = load_data(url, max_depth, files, youtube)
     
     # create a vectorstore from the chunks
     vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
@@ -108,8 +111,8 @@ def get_response(user_input):
     return response['answer']
 
 # app config
-st.set_page_config(page_title="Website + Document Bot 🤖", page_icon="🤖")
-st.title("Website + Document Bot 🤖")
+st.set_page_config(page_title="Youtube+Website+Document Bot 🤖", page_icon="🤖")
+st.title("Youtube+Website+Document 🤖")
 
 if "freeze" not in st.session_state:
     st.session_state.freeze = False
@@ -122,7 +125,8 @@ if "files" not in st.session_state:
 
 # sidebar
 with st.sidebar:
-    st.header("Website + Document Bot 🤖")
+    st.header("Youtube+Website+Document 🤖")
+    st.session_state.youtube_url = st.text_input("Youtube URL (English Language Only)", disabled=st.session_state.freeze)
     st.session_state.web_url = st.text_input("Website URL", disabled=st.session_state.freeze)
     
     st.session_state.max_depth = st.slider("Select maximum scraping depth:", 1, 5, 1, disabled=st.session_state.freeze)
@@ -137,8 +141,10 @@ with st.sidebar:
     
 if ((st.session_state.web_url is None or st.session_state.web_url == "") 
     and 
-    (st.session_state.files is None or st.session_state.files == "")):
-    st.info("Please enter a website URL and(or) Documents")
+    (st.session_state.files is None or st.session_state.files == "")
+    and
+    (st.session_state.youtube_url is None or st.session_state.youtube_url == "")):
+    st.info("Please enter a Youtube URL and(or) Web URL and(or) Documents")
 
 else:
     if st.session_state.freeze:
@@ -149,10 +155,11 @@ else:
             ]
         if "vector_store" not in st.session_state:
             with st.sidebar:
-                with st.spinner("Scrapping Website & Documents..."):
+                with st.spinner("Scrapping Youtube_Video, Website & Documents..."):
                     st.session_state.vector_store, st.session_state.len_urls = get_vectorstore(st.session_state.web_url,
                                                                                                st.session_state.max_depth,
-                                                                                               st.session_state.files)
+                                                                                               st.session_state.files,
+                                                                                               st.session_state.youtube_url)
                     st.write(f"Total Pages Scrapped: {st.session_state.len_urls}")
                     st.success("Scraping completed, 🤖 Ready!")
 
