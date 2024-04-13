@@ -111,8 +111,8 @@ def get_response(user_input):
     return response['answer']
 
 # app config
-st.set_page_config(page_title="Youtube+Website+Document Bot 🤖", page_icon="🤖")
-st.title("Youtube+Website+Document 🤖")
+st.set_page_config(page_title="ChatVerse 🤖 WhereEverythingTalks", page_icon="🤖")
+st.title("ChatVerse 🤖 WhereEverythingTalks")
 
 if "freeze" not in st.session_state:
     st.session_state.freeze = False
@@ -125,7 +125,7 @@ if "files" not in st.session_state:
 
 # sidebar
 with st.sidebar:
-    st.header("Youtube+Website+Document 🤖")
+    st.header("ChatVerse 🤖 ")
     st.session_state.youtube_url = st.text_input("Youtube URL (English Language Only)", disabled=st.session_state.freeze)
     st.session_state.web_url = st.text_input("Website URL", disabled=st.session_state.freeze)
     
