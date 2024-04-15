@@ -6,7 +6,7 @@ Welcome to ChatVerse! This dynamic platform enables conversational interactions 
 
 Experience the power of ChatVerse through our deployed demo on Streamlit:
 
-- [ChatVerse Demo on Streamlit](https://webchat-demo.streamlit.app/)
+- [ChatVerse Demo on Streamlit](https://chatverse-demo.streamlit.app/)
 - [ChatVerse Demo on Render](https://webchat-websitechatbot.onrender.com/)
 
 Note: Website URL syntax should be "https://<website>", else the connection will not be secure which will further cause error while scraping. Example - https://en.wikipedia.org/wiki/Edward_Snowden
