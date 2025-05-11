@@ -10,3 +10,4 @@ pypdf
 watchdog
 openai-whisper
 pytube
+pytubefix
